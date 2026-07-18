@@ -22,17 +22,20 @@ def show_digit(idx):
 
     # 4. 查看用户传入的索引图片 --> 是几
     print(f'该图片对应数字是{y.iloc[idx]}')
+    print(f'查看所有标签分布情况：{Counter(y)}')
 
     # 5. 查看 用户传入的索引图片 的形状
     print(x.iloc[idx].shape)        # 我们要把(784,) 变成 (28,28)
     # print(x.iloc[idx].values)         # 具体的784个像素点数据
 
     # 6. 把(784,) 变成 (28,28)
+    x = x.iloc[idx].values.reshape(28, 28)
+    # print(x)          # 28*28像素点
 
-
-
-
-
+    # 7. 具体的绘制灰度图动作
+    plt.imshow(x, cmap='gray')      # gray灰度图
+    plt.axis('off')                 # 关闭坐标
+    plt.show()
 
 # 2.
 
