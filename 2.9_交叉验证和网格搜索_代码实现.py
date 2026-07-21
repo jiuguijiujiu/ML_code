@@ -29,7 +29,7 @@ param_dict = {'n_neighbors':[i for i in range(1,11)]}
 # 参数2: 超参数可能出现的情况
 # 参数3: 交叉验证的折数, 这里是4折校验: 每个超参数进行 4次交叉校验, 4*10 = 40次
 # 返回值 estimator 处理后的模型对象
-estimator = GridSearchCV(estimator = estimator, param_grid = param_dict, cv = 4)        # 怎么感觉像是在原有模型上 添加了规则
+estimator = GridSearchCV(estimator = estimator, param_grid = param_dict, cv = 4)        # 怎么感觉像是在原有模型上 添加了功能
 # 4.4 模型训练
 estimator.fit(x_train, y_train)
 # 4.5 打印最优超参数组合
