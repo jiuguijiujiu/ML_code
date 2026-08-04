@@ -106,11 +106,6 @@ def dm03_logistic_regression():
     print(f'roc_auc_score：{roc_auc_score(y_test, y_pre)}')
     print(f'分类评估报告：{classification_report(y_test, y_pre)}')
 
-
-
-
-
-
 # 4. 测试
 if __name__ == '__main__':
     # dm01_data_preprocess()
