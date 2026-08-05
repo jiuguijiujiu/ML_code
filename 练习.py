@@ -1,45 +1,38 @@
-# 导包
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import roc_auc_score, classification_report
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
+
+# 提取数据
+data = pd.read_csv('./data/train.csv')
+# data.info()
 
 # 数据预处理
-# 读取数据
-data = pd.read_csv('./data/churn.csv')
-# print(data.head())
+data['Age'].fillna(data['Age'].mean(),inplace = True)
+data = pd.get_dummies(data, columns = ['Sex'])
+data.drop(columns = 'Sex_female', inplace = True)
 # data.info()
-# one-hot热编码处理Churn与gender
-data = pd.get_dummies(data, columns = ['Churn', 'gender'])
-# print(data.head())
-# data.info()
-# 删掉多余列
-data.drop(columns = ['Churn_No', 'gender_Female'], axis = 1, inplace = True)
-# 修改列名
-data.rename(columns = {'Churn_Yes': 'flag'}, inplace = True)
-print(data.head())
-data.info()
-# 查看数据分布是否均匀
-print(data.flag.value_counts())
-
-# 数据可视化，绘制计数柱状图
-sns.countplot(data, x = 'Contract_Month', hue = 'flag')
-plt.show()
 
 # 特征工程
-x = data[['Contract_Month', 'internet_other', 'PaymentElectronic']]
-y = data.flag
-# 划分数据集
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 888)
-# 创建模型对象
-estimator = LogisticRegression()
-# 训练
+x = data[['Pclass', 'Age', 'Sex_male']]
+y = data['Survived']
+x.info()
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 0)
+
+# 模型训练
+estimator = DecisionTreeClassifier(max_depth = 10)
 estimator.fit(x_train, y_train)
-# 预测
+
+# 模型预测
 y_pre = estimator.predict(x_test)
 print(y_pre)
-# 评估
-print(roc_auc_score(y_test, y_pre))
+
+# 模型评估
 print(classification_report(y_test, y_pre))
+
+# 绘制
+plt.figure(figsize = (30, 30))
+plot_tree(estimator, max_depth = 10, filled = True)
+plt.show()
