@@ -1,36 +1,47 @@
-import pandas as pd
-from sklearn.ensemble import AdaBoostClassifier
+import numpy as np                  # 数学计算包
+import pandas as pd                 # 数据处理包
+import matplotlib.pyplot as plt     # 画图包
+import jieba                        # 分词包
+from sklearn.feature_extraction.text import CountVectorizer     # 词频统计包，把评论内容 转成 词频矩阵。
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import MultinomialNB                   # 朴素贝叶斯对象
 
-data = pd.read_csv('./data/wine0501.csv')
-# data.info()
-# print(data['Class label'].unique())
-
-data = data[data['Class label'] != 3]
+data = pd.read_csv('./data/书籍评价.csv', encoding='gbk')
 # print(data.head())
-# print(data['Class label'].unique())
+# data.info()
 
-x = data[['Alcohol', 'Hue']]        # 酒精与色泽
-y = data['Class label']
+data['table'] = np.where(data['评价'] == '好评', 1, 0)
+# print(data.head())
+y = data['table']
 
-ls = LabelEncoder()
-y = ls.fit_transform(y)
-# print(y)
+# comment_list = [jieba.lcut(line) for line in data['内容']]
+# print(comment_list)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size = 0.2, random_state = 0)
+comment_list = [','.join(jieba.lcut(line)) for line in data['内容']]
+# print(comment_list)
 
-estimator1 = DecisionTreeClassifier(max_depth = 3)
-estimator1.fit(x_train, y_train)
-y_pred1 = estimator1.predict(x_test)
-print(y_pred1)
-print(accuracy_score(y_test, y_pred1))
-print('-' * 50)
+with open('./data/stopwords.txt', 'r', encoding='utf-8') as f:
+    stopwords = f.readlines()
+    # print(stopwords)
+    stopwords = [x.strip() for x in stopwords]
+    # print(stopwords)
+    stopwords = list(set(stopwords))
+    # print(stopwords)
 
-estimator2 = AdaBoostClassifier(estimator1, n_estimators = 100, learning_rate = 0.1)
-estimator2.fit(x_train, y_train)
-y_pred2 = estimator2.predict(x_test)
-print(y_pred2)
-print(accuracy_score(y_test, y_pred2))
+transfor = CountVectorizer(stop_words=stopwords)
+x = transfor.fit_transform(comment_list).toarray()
+# print(x)
+
+x_train = x[:10]
+y_train = y[:10]
+
+x_test = x[10:]
+y_test = y[10:]
+
+estimator = MultinomialNB()
+estimator.fit(x_train, y_train)
+
+y_pred = estimator.predict(x_test)
+print(y_pred)
+
+print(accuracy_score(y_test, y_pred))
