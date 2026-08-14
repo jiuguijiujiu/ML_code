@@ -7,9 +7,9 @@ import numpy as np
 # 测试集在 data目录下的 test.csv文件中 → 模拟项目上线后，真实的测试集。
 
 # 定义函数 data_preprocessing()，对数据做预处理操作。
-def data_preprocessing():
+def data_preprocessing(file_path):
     # 1. 加载数据集
-    data = pd.read_csv('../data/train.csv')
+    data = pd.read_csv(file_path)
     # data.info()
     # 2. 时间格式化，转为：'%Y-%m-%d %H:%M:%S'
     data['time'] = pd.to_datetime(data['time']).dt.strftime('%Y-%m-%d %H:%M:%S')
@@ -24,4 +24,4 @@ def data_preprocessing():
     return data
 
 if __name__ == '__main__':
-    data_preprocessing()
+    data_preprocessing('../data/train.csv')
